@@ -1,6 +1,6 @@
 <!--
 @license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
 The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
@@ -8,164 +8,182 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="my-icons.html">
 
-  <title>demo4</title>
+<dom-module id="my-app">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: var(--paper-blue-700);
+        --app-secondary-color: black;
 
-  <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+        display: block;
+      }
 
-  <!-- Promise polyfill needed for 1.0-hybrid mode since neither iron-request 2.x nor
-    webcomponentsjs 0.x include the Promise polyfill. -->
-  <script src="../bower_components/es6-promise/es6-promise.auto.min.js"></script>
+      app-drawer-layout:not([narrow]) [drawer-toggle] {
+        display: none;
+      }
 
-  <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-  <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
-  <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-  <link rel="import" href="../bower_components/iron-list/iron-list.html">
-  <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-  <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-  <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-  <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-  <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-  <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-  <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-  <link rel="import" href="sample-content.html">
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
 
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      background-color: #eee;
-    }
-  </style>
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
 
-</head>
-<body unresolved>
+      paper-icon-button {
+        color: #fff;
+        background-color: var(--paper-blue-700);
+        float: right;
+        margin: 8px;
+        border-radius: 20px;
+      }
 
-  <dom-module id="x-demo">
-    <template>
-      <style>
-        app-header {
-          background-color: #0b8043;
-          color: white;
-          --app-header-background-front-layer: {
-            background-color: #4285f4;
-          };
-        }
-        app-header paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
-        iron-list {
-          background-color: var(--paper-grey-200, #eee);
-          padding-bottom: 16px;
-          @apply --layout-flex;
-        }
-        .item {
-          @apply --layout-horizontal;
-          margin: 16px 16px 0 16px;
-          padding: 20px;
-          border-radius: 8px;
-          background-color: white;
-          border: 1px solid #ddd;
-        }
-        .avatar {
-          height: 40px;
-          width: 40px;
-          border-radius: 20px;
-          box-sizing: border-box;
-          background-color: #DDD;
-        }
-        .pad {
-          padding: 0 16px;
-          @apply --layout-flex;
-          @apply --layout-vertical;
-        }
-        .primary {
-          font-size: 16px;
-          font-weight: bold;
-        }
-        .secondary {
-          font-size: 14px;
-        }
-        .dim {
-          color: gray;
-        }
-        .mainHeader [main-title] {
-          font-weight: 400;
-          margin: 0 0 0 50px;
-        }
-        .mainHeader [condensed-title] {
-          font-weight: 400;
-          margin-left: 30px;
-        }
-        .mainHeader [condensed-title] i {
-          font-style: normal;
-          font-weight: 100;
-        }
-        app-toolbar.tall {
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+
+      .mainHeader [main-title] {
+        font-weight: 400;
+        margin: 0 0 0 50px;
+      }
+
+      .mainHeader [condensed-title] {
+        font-weight: 400;
+        margin-left: 30px;
+      }
+      .mainHeader [condensed-title] i {
+        font-style: normal;
+        font-weight: 100;
+      }
+      .pageContent {
+        padding: 16px;
+      }
+      app-toolbar.tall {
           height: 148px;
-        }
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
-      </style>
+      }
 
-      <app-drawer-layout>
-        <app-drawer swipe-open slot="drawer">
-          <app-toolbar class="navToolbar">App name</app-toolbar>
-        </app-drawer>
-        <app-header-layout>
-          <app-header class="mainHeader" condenses fixed effects="resize-title blend-background waterfall" slot="header">
-            <app-toolbar>
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <h4 condensed-title>Contacts <i>&mdash; Summary</i></h4>
-              <paper-icon-button icon="search"></paper-icon-button>
-              <paper-icon-button icon="more-vert"></paper-icon-button>
-            </app-toolbar>
-            <app-toolbar class="tall">
-              <h1 main-title>Contacts</h1>
-            </app-toolbar>
-          </app-header>
-          <iron-list items="[[data]]" as="item" scroll-target="document">
-            <template>
-              <div>
-                <div class="item" tabindex$="[[tabIndex]]">
-                  <img class="avatar" src="[[item.image]]">
-                  <div class="pad">
-                    <div class="primary">[[item.name]]</div>
-                    <div class="secondary">[[item.shortText]]</div>
-                    <div class="secondary dim">[[item.longText]]</div>
-                  </div>
-                  <iron-icon icon$="[[iconForItem(item)]]"></iron-icon>
-                </div>
-              </div>
-            </template>
-          </iron-list>
+      paper-card {
+        width: calc(100vw - 64px);
+        margin: 16px;
+      }
 
-          <iron-ajax url="./src/contacts.json" last-response="{{data}}" auto></iron-ajax>
+      paper-input {
+        display: inline-block;
+      }
 
-        </app-header-layout>
-      </app-drawer-layout>
+      paper-button {
+        color: #fff;
+        background-color: var(--paper-blue-700);
+      }
 
-    </template>
+    </style>
 
-    <script>
-    HTMLImports.whenReady(function() {
-      Polymer({
-        is: 'x-demo',
-        iconForItem: function(item) {
-          return item ? (item.integer < 50 ? 'star-border' : 'star') : '';
-        }
-      });
-    });
-    </script>
-  </dom-module>
 
-  <x-demo></x-demo>
+      <!-- Main content -->
+      <app-header-layout>
+        <app-header class="mainHeader" condenses fixed effects="resize-title blend-background waterfall" slot="header">
+          <app-toolbar>
+            <h4 condensed-title>Build alert</h4>
+          </app-toolbar>
+          <app-toolbar class="tall">
+            <h1 main-title>Build Alert</h1>
+          </app-toolbar>
+        </app-header>
 
-</body>
-</html>
+      </app-header-layout>
+      <div class="pageContent">
+        <paper-card heading="Play Fanfare">
+          <div class="card-content">
+            <p>The Fanfare that plays when hitting the 'playFanfare' endpoint </p>
+          </div>
+          <div class="card-actions">
+            <paper-icon-button icon="av:play-arrow" on-click="play"></paper-button>
+          </div>
+        </paper-card>
+        <paper-card heading="Volume">
+          <div class="card-content">
+            <p>Control the volume of the speaker!</p>
+          </div>
+          <div class="card-actions">
+            <paper-icon-button icon="av:volume-up" on-click="volumeUp"></paper-icon-button>
+            <paper-icon-button icon="av:volume-down" on-click="volumeDown"></paper-icon-button>
+            <paper-input id="volumeInput" label="Set Volume Level" allowed-pattern="[0-9]" type="number">Set volume percent</paper-input>
+            <paper-button label="set" on-click="volumeSet()">Set</paper-button>
+            <paper-icon-button icon="av:volume-mute" on-click="volumeSet(0)"></paper-icon-button>
+      </div>
+  </template>
+
+  <script>
+    // Gesture events like tap and track generated from touch will not be
+    // preventable, allowing for better scrolling performance.
+    Polymer.setPassiveTouchGestures(true);
+
+    class MyApp extends Polymer.Element {
+      static get is() { return 'my-app'; }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          },
+          routeData: Object,
+          subroute: Object,
+          // This shouldn't be neccessary, but the Analyzer isn't picking up
+          // Polymer.Element#rootPath
+          rootPath: String
+        };
+      }
+      play() {
+          console.log('played');
+      }
+
+      volumeUp() {
+        console.log('volume up');
+      }
+
+      volumeDown() {
+        console.log('volume down');
+      }
+
+      volumeSet(i) {
+        console.log('volume set to ' + i);
+      }
+    }
+
+    window.customElements.define(MyApp.is, MyApp);
+  </script>
+</dom-module>
