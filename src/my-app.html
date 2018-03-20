@@ -20,6 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
@@ -109,7 +110,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
     </style>
-
+    <!-- Requests -->
+    <iron-ajax
+      id="play"
+      url="/playFanfare"
+      debounce-duration="300"></iron-ajax>
+    <iron-ajax
+      id="turnUp"
+      url="/volume/up"
+      debounce-duration="300"></iron-ajax>
+    <iron-ajax
+      id="turnDown"
+      url="/volume/down"
+      debounce-duration="300"></iron-ajax>
+    <iron-ajax
+      id="mute"
+      url="/volume/set/0"
+      debounce-duration="300"></iron-ajax>
+    <iron-ajax
+      id="setVolume"
+      url="/volume/set/[[volumeLevel]]"
+      debounce-duration="300"></iron-ajax>
 
       <!-- Main content -->
       <app-header-layout>
@@ -139,9 +160,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="card-actions">
             <paper-icon-button icon="av:volume-up" on-click="volumeUp"></paper-icon-button>
             <paper-icon-button icon="av:volume-down" on-click="volumeDown"></paper-icon-button>
-            <paper-input id="volumeInput" label="Set Volume Level" allowed-pattern="[0-9]" type="number">Set volume percent</paper-input>
-            <paper-button label="set" on-click="volumeSet()">Set</paper-button>
-            <paper-icon-button icon="av:volume-mute" on-click="volumeSet(0)"></paper-icon-button>
+            <paper-input id="volumeInput" value="{{volumeLevel}}"label="Set Volume Level" allowed-pattern="[0-9]" type="number">Set volume percent</paper-input>
+            <paper-button label="set" on-click="volumeSet">Set</paper-button>
+            <paper-icon-button icon="av:volume-mute" on-click="volumeMute"></paper-icon-button>
       </div>
   </template>
 
@@ -164,23 +185,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           subroute: Object,
           // This shouldn't be neccessary, but the Analyzer isn't picking up
           // Polymer.Element#rootPath
-          rootPath: String
+          rootPath: String,
+          volumeLevel: Number
         };
       }
       play() {
           console.log('played');
+          this.$.play.generateRequest();
       }
 
       volumeUp() {
         console.log('volume up');
+        this.$.turnUp.generateRequest();
       }
 
       volumeDown() {
         console.log('volume down');
+        this.$.turnDown.generateRequest();
       }
 
-      volumeSet(i) {
-        console.log('volume set to ' + i);
+      volumeSet() {
+        console.log('volume set to ' + this.volumeLevel);
+        this.$.setVolume.generateRequest();
+      }
+
+      volumeMute() {
+        console.log('volume muted')
+        this.$.mute.generateRequest();
       }
     }
 
