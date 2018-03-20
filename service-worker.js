@@ -13,3 +13,28 @@
 console.info(
   'Service worker disabled for development, will be generated at build time.'
 );
+self.addEventListener('install', function(e) {
+  const timeStamp = Date.now();
+  e.waitUntil(
+    caches.open('buildalert').then(cache => {
+      return cache.addAll([
+        '/',
+        'src/my-app.html',
+        'manifest.json'
+      ])
+      .then(() => self.skipWaiting());
+    })
+  )
+})
+
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request, {ignoreSearch: true}).then(response => {
+      return response || fetch(event.request)
+    })
+  )
+})
